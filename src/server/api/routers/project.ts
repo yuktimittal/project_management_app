@@ -11,7 +11,13 @@ export const projectRouter = createTRPCRouter({
         userId: ctx.session.user.id,
       },
     });
-    return projects.map(({ id, name }) => ({ id, name }));
+    return projects.map(({ id, name, startDate, endDate }) => ({
+      id,
+      name,
+      startDate,
+      endDate,
+      // createdBy,
+    }));
   }),
 
   create: protectedProcedure
