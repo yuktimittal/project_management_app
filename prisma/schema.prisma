@@ -55,14 +55,19 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
+    id             String           @id @default(cuid())
+    name           String?
+    email          String?          @unique
+    emailVerified  DateTime?
+    image          String?
+    role           String?
+    accounts       Account[]
+    sessions       Session[]
+    posts          Post[]
+    Project        Project[]
+    Task           Task[]
+    ProjectMembers ProjectMembers[]
+    Comment        Comment[]
 }
 
 model VerificationToken {
@@ -71,4 +76,62 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Project {
+    id             String           @id @default(cuid())
+    name           String
+    description    String?
+    startDate      DateTime
+    endDate        DateTime
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    createdBy      User             @relation(fields: [userId], references: [id])
+    userId         String
+    Task           Task[]
+    ProjectMembers ProjectMembers[]
+}
+
+model Task {
+    id          String    @id @default(cuid())
+    title       String
+    description String?
+    priority    String
+    labels      String[]
+    assignee    User      @relation(fields: [userId], references: [id])
+    userId      String
+    status      String
+    project     Project   @relation(fields: [projectId], references: [id])
+    projectId   String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    Comment     Comment[]
+}
+
+model ProjectMembers {
+    id          String   @id @default(cuid())
+    project     Project  @relation(fields: [projectId], references: [id])
+    projectId   String
+    user        User     @relation(fields: [userId], references: [id])
+    userId      String
+    joiningDate DateTime @default(now())
+    isActive    Boolean  @default(true)
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    task      Task     @relation(fields: [taskId], references: [id])
+    taskId    String
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    body      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model TaskActivity {
+    id           String   @id @default(cuid())
+    activityType String
+    details      String
+    timestamp    DateTime @default(now())
 }
