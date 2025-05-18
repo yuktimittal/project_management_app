@@ -10,13 +10,19 @@ export const projectRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
+      include: {
+        createdBy: {
+          select: { name: true },
+        },
+      },
     });
-    return projects.map(({ id, name, startDate, endDate }) => ({
+
+    return projects.map(({ id, name, startDate, endDate, createdBy }) => ({
       id,
       name,
       startDate,
       endDate,
-      // createdBy,
+      createdBy,
     }));
   }),
 

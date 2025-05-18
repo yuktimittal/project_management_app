@@ -6,13 +6,13 @@ type ProjectProps = {
 };
 
 export default function ProjectCard({ project }: ProjectProps) {
-  const { name, startDate, endDate } = project;
+  const { name, startDate, endDate, createdBy } = project;
 
   return (
     <div className="flex items-center justify-between rounded-xl border border-gray-700 bg-gray-800 p-4 shadow transition hover:bg-gray-700">
       <div>
         <h2 className="text-lg font-semibold text-white">{name}</h2>
-        <p className="text-sm text-gray-400">Created by: {"Yukti"}</p>
+        <p className="text-sm text-gray-400">Created by: {createdBy.name}</p>
       </div>
       <div className="text-right text-sm text-gray-300">
         <p>
