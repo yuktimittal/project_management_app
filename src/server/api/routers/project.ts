@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 import { projectInput } from "~/types";
@@ -10,9 +9,15 @@ export const projectRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        startDate: true,
+        endDate: true,
         createdBy: {
-          select: { name: true },
+          select: {
+            name: true,
+          },
         },
       },
     });
@@ -41,5 +46,25 @@ export const projectRouter = createTRPCRouter({
           },
         },
       });
+    }),
+
+  getProjectById: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.db.project.findFirst({
+        where: {
+          id: input,
+        },
+        include: {
+          createdBy: {
+            select: { name: true },
+          },
+        },
+      });
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      return project;
     }),
 });
