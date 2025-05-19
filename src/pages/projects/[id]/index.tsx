@@ -1,19 +1,36 @@
 import { useParams } from "next/navigation";
 import { api } from "~/utils/api";
+import { z } from "zod";
 import Header from "~/components/Header";
 import { useEffect, useState } from "react";
 import { ProjectDetailsBox } from "~/components/ProjectDetailsBox";
 import { TaskTabs } from "~/components/TaskTabs";
 import CreateTaskModal from "~/components/CreateTaskModal";
 
+const TaskFormType = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  priority: z.enum(["Critical", "High", "Medium", "Low"]),
+  assigneeId: z.string().optional(),
+  type: z.enum(["Story", "Task", "Bug"]),
+  dueDate: z.date().optional(),
+});
+
 export default function ProjectDetails() {
   const params = useParams<{ id: string }>();
-  const id = params?.id as string | undefined;
+  const id = params?.id as string;
 
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const trpc = api.useUtils();
+  const { mutate: createTaskMutation } = api.task.create.useMutation({
+    onSettled: async () => {
+      await trpc.task.getTasksByProjectId.invalidate();
+    },
+  });
 
-  const createTask = (task: any) => {
-    console.log(task);
+  const createTask = (task: z.infer<typeof TaskFormType>) => {
+    console.log("task", task);
+    createTaskMutation({ ...task, projectId: id });
   };
   useEffect(() => {}, []);
   const {
