@@ -11,3 +11,5 @@ export const TaskPriorityChoices = {
   MEDIUM: "Medium",
   LOW: "Low",
 };
+
+export const TaskTabOptions = ["All", "To Do", "In Progress", "Done"];

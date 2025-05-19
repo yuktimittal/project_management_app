@@ -1,5 +1,6 @@
 import type { ProjectType } from "~/types";
 import { dateFormatter } from "~/utils/utils";
+import Link from "next/link";
 
 type ProjectProps = {
   project: ProjectType;
@@ -20,12 +21,12 @@ export default function ProjectCard({ project }: ProjectProps) {
           {dateFormatter.format(new Date(endDate))}
         </p>
       </div>
-      <button
-        onClick={() => console.log("view")}
+      <Link
+        href={`/projects/${project.id}`}
         className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white transition hover:bg-blue-500"
       >
         View
-      </button>
+      </Link>
     </div>
   );
 }
