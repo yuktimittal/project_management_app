@@ -111,7 +111,7 @@ model Task {
     Comment     Comment[]
     reporter    User      @relation("ReportedTasks", fields: [reporterId], references: [id])
     reporterId  String
-    deadline    DateTime?
+    dueDate     DateTime?
 }
 
 model ProjectMembers {

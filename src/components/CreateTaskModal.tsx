@@ -32,7 +32,7 @@ export default function CreateTaskModal({
     type: "Task",
     dueDate: undefined,
   });
-  const [searchUser, setSearchUser] = useState("");
+
   const [assigneeName, setAssigneeName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -63,10 +63,6 @@ export default function CreateTaskModal({
     const user = users.find((u) => u.name.toLowerCase() === name.toLowerCase());
     setFormData((prev) => ({ ...prev, assigneeId: user?.id || "" }));
   };
-
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchUser.toLowerCase()),
-  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

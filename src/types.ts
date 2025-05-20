@@ -7,10 +7,12 @@ type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 type allProjectsOutput = RouterOutputs["project"]["all"];
 type allTasksOutput = RouterOutputs["task"]["getTasksByProjectId"];
+type allUserOutput = RouterOutputs["user"]["all"];
 
 export type ProjectType = allProjectsOutput[number];
 
 export type TasksType = allTasksOutput;
+export type UserType = allUserOutput[number];
 
 export const projectInput = z.object({
   name: z.string({ required_error: "Give project a name" }).min(1).max(50),

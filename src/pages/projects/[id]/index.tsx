@@ -32,7 +32,7 @@ export default function ProjectDetails() {
     console.log("task", task);
     createTaskMutation({ ...task, projectId: id });
   };
-  useEffect(() => {}, []);
+
   const {
     data: project,
     isLoading: loadingProjects,

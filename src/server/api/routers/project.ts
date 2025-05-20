@@ -67,4 +67,45 @@ export const projectRouter = createTRPCRouter({
 
       return project;
     }),
+
+  addMembers: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        userIds: z.array(z.string()).min(1),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { projectId, userIds } = input;
+
+      // Fetch existing member userIds
+      const existingMembers = await ctx.db.projectMembers.findMany({
+        where: {
+          projectId,
+          userId: { in: userIds },
+        },
+        select: { userId: true },
+      });
+
+      const existingIds = new Set(existingMembers.map((m) => m.userId));
+
+      // Filter out users who are already members
+      const newUserIds = userIds.filter((id) => !existingIds.has(id));
+
+      if (newUserIds.length === 0) {
+        throw new Error(
+          "All selected users are already members of this project.",
+        );
+      }
+
+      const result = await ctx.db.projectMembers.createMany({
+        data: userIds.map((userId) => ({
+          userId,
+          projectId,
+        })),
+        skipDuplicates: true,
+      });
+
+      return result;
+    }),
 });
