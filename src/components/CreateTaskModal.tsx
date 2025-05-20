@@ -1,49 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { TaskPriorityChoices } from "~/constants";
-
-const TaskFormType = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  priority: z.enum(["Critical", "High", "Medium", "Low"]),
-  assigneeId: z.string().optional(),
-  type: z.enum(["Story", "Task", "Bug"]),
-  dueDate: z.date().optional(),
-});
+import { TaskPriorityChoices, TaskTypeOptions } from "~/constants";
+import type { UserType } from "~/types";
+import { TaskFormType } from "~/types";
 
 type CreateTaskModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (task: z.infer<typeof TaskFormType>) => void;
+  projectMembers: UserType[];
 };
 
 export default function CreateTaskModal({
   isOpen,
   onClose,
   onCreate,
+  projectMembers,
 }: CreateTaskModalProps) {
   const [formData, setFormData] = useState<z.infer<typeof TaskFormType>>({
     title: "",
     description: "",
     priority: "Medium",
-    assigneeId: "",
+    assigneeId: undefined,
     type: "Task",
     dueDate: undefined,
   });
 
-  const [assigneeName, setAssigneeName] = useState("");
+  const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const users = [
-    { id: "1", name: "Alice Johnson" },
-    { id: "2", name: "Bob Smith" },
-    { id: "3", name: "Charlie Young" },
-  ];
-
   const priorities = Object.entries(TaskPriorityChoices);
-  const types = ["Story", "Task", "Bug"];
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const userFilter = projectMembers?.filter((u) =>
+      u?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    setFilteredUsers(userFilter || []);
+  }, [searchTerm]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -57,10 +56,9 @@ export default function CreateTaskModal({
   const handleDateChange = (date: Date | null) => {
     setFormData((prev) => ({ ...prev, dueDate: date ?? undefined }));
   };
-  const handleAssigneeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setAssigneeName(name);
-    const user = users.find((u) => u.name.toLowerCase() === name.toLowerCase());
+  const handleAssigneeChange = (user: UserType) => {
+    setSearchTerm(user?.name ? user.name : "");
+    setShowAssigneeDropdown(false);
     setFormData((prev) => ({ ...prev, assigneeId: user?.id || "" }));
   };
 
@@ -133,21 +131,39 @@ export default function CreateTaskModal({
             </select>
           </div>
 
-          <div>
+          {/* Select Assignee Input */}
+          <div className="relative">
             <label className="mb-1 block">Assignee</label>
             <input
+              ref={inputRef}
               type="search"
-              list="user-options"
               placeholder="Search user..."
-              value={assigneeName}
-              onChange={handleAssigneeChange}
-              className="w-full rounded border border-gray-600 bg-gray-800 px-3 py-2 text-white"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setShowAssigneeDropdown(true);
+              }}
+              onFocus={() => setShowAssigneeDropdown(true)}
+              className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring focus:ring-blue-500 focus:outline-none"
             />
-            <datalist id="user-options">
-              {users.map((user) => (
-                <option key={user.id} value={user.name} />
-              ))}
-            </datalist>
+
+            {showAssigneeDropdown && searchTerm && (
+              <ul className="absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded border border-gray-700 bg-gray-500">
+                {filteredUsers?.length > 0 ? (
+                  filteredUsers?.map((user) => (
+                    <li
+                      key={user.id}
+                      className="cursor-pointer px-4 py-2 hover:bg-gray-700"
+                      onClick={() => handleAssigneeChange(user)}
+                    >
+                      {user.name}
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-4 py-2 text-gray-400">No users found</li>
+                )}
+              </ul>
+            )}
           </div>
 
           <div>
@@ -158,7 +174,7 @@ export default function CreateTaskModal({
               onChange={handleChange}
               className="w-full rounded border border-gray-600 bg-gray-800 px-3 py-2 text-white"
             >
-              {types.map((type) => (
+              {TaskTypeOptions.map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>

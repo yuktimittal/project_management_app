@@ -6,15 +6,7 @@ import { useEffect, useState } from "react";
 import { ProjectDetailsBox } from "~/components/ProjectDetailsBox";
 import { TaskTabs } from "~/components/TaskTabs";
 import CreateTaskModal from "~/components/CreateTaskModal";
-
-const TaskFormType = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  priority: z.enum(["Critical", "High", "Medium", "Low"]),
-  assigneeId: z.string().optional(),
-  type: z.enum(["Story", "Task", "Bug"]),
-  dueDate: z.date().optional(),
-});
+import type { TaskFormType } from "~/types";
 
 export default function ProjectDetails() {
   const params = useParams<{ id: string }>();
@@ -41,55 +33,18 @@ export default function ProjectDetails() {
     enabled: !!id,
   });
 
-  // const {
-  //   data: tasks,
-  //   isLoading: loadingTasks,
-  //   isError: errorTasks,
-  // } = api.task.getTasksByProjectId.useQuery(id!, {
-  //   enabled: !!id,
-  // });
-  const tasks = [
-    {
-      id: "1",
-      title: "Setup Repo",
-      status: "To Do",
-      priority: "High",
-      assignee: { name: "Alice" },
-      type: "Bug",
-      reporter: { name: "John" },
-      createdAt: new Date(),
-    },
-    {
-      id: "2",
-      title: "Design DB",
-      status: "In Progress",
-      priority: "Medium",
-      assignee: { name: "Bob" },
-      type: "Feature",
-      reporter: { name: "Jane" },
-      createdAt: new Date(),
-    },
-    {
-      id: "3",
-      title: "Design DB",
-      status: "In Progress",
-      priority: "Low",
-      assignee: { name: "Bob" },
-      type: "Feature",
-      reporter: { name: "Jane" },
-      createdAt: new Date(),
-    },
-    {
-      id: "4",
-      title: "Design DB",
-      status: "In Progress",
-      priority: "Critical",
-      assignee: { name: "Bob" },
-      type: "Feature",
-      reporter: { name: "Jane" },
-      createdAt: new Date(),
-    },
-  ];
+  const { data: projectMembers } = api.user.getProjectMembers.useQuery(id!, {
+    enabled: !!id,
+  });
+
+  const {
+    data: tasks,
+    isLoading: loadingTasks,
+    isError: errorTasks,
+  } = api.task.getTasksByProjectId.useQuery(id!, {
+    enabled: !!id,
+  });
+
   if (errorProjects || !project) {
     return (
       <div className="min-h-screen bg-zinc-950 px-6 py-8">
@@ -118,6 +73,7 @@ export default function ProjectDetails() {
           isOpen={showTaskForm}
           onClose={() => setShowTaskForm(false)}
           onCreate={createTask}
+          projectMembers={projectMembers || []}
         />
       </div>
     </>

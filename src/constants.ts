@@ -13,3 +13,4 @@ export const TaskPriorityChoices = {
 };
 
 export const TaskTabOptions = ["All", "To Do", "In Progress", "Done"];
+export const TaskTypeOptions = ["Story", "Task", "Sub Task", "Bug"];

@@ -1,7 +1,11 @@
 import { z } from "zod";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "./server/api/root";
-import { TaskPriorityChoices, TaskStatusChoices } from "./constants";
+import {
+  TaskPriorityChoices,
+  TaskStatusChoices,
+  TaskTypeOptions,
+} from "./constants";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 
@@ -21,7 +25,7 @@ export const projectInput = z.object({
 });
 
 export const taskInput = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.string().cuid(),
   title: z.string({ required_error: "Give project a name" }).min(1).max(50),
   description: z.string().optional(),
   priority: z.enum(
@@ -31,7 +35,7 @@ export const taskInput = z.object({
       invalid_type_error: `Priority must be one of: ${Object.values(TaskPriorityChoices)} `,
     },
   ),
-  assigneeId: z.string().uuid().optional(),
+  assigneeId: z.string().cuid().optional(),
   type: z.string(),
 });
 
@@ -54,4 +58,13 @@ export const updateTaskInput = z.object({
         .optional(),
     })
     .partial(),
+});
+
+export const TaskFormType = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  priority: z.enum(["Critical", "High", "Medium", "Low"]),
+  assigneeId: z.string().optional(),
+  type: z.enum(TaskTypeOptions as [string, ...string[]]),
+  dueDate: z.date().optional(),
 });
