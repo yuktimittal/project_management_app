@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Header() {
   const { data: sessionData } = useSession();
@@ -30,13 +31,15 @@ export default function Header() {
   return (
     <nav className="flex w-full items-center justify-between bg-gray-900 px-4 py-3 text-white shadow-lg">
       <div className="flex items-center space-x-3">
-        <Image
-          src="/images/easySLR_logo.svg"
-          alt="Logo"
-          width={100}
-          height={100}
-          color="#fff"
-        />
+        <Link href={"/"}>
+          <Image
+            src="/images/easySLR_logo.svg"
+            alt="Logo"
+            width={100}
+            height={100}
+            color="#fff"
+          />
+        </Link>
         <span className="text-xl font-bold tracking-wide">
           Project Management
         </span>
@@ -53,6 +56,7 @@ export default function Header() {
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             <span className="absolute -inset-1.5"></span>
+
             <img
               className="size-8 rounded-full"
               src={

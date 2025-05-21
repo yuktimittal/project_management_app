@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { dateFormatter } from "~/utils/utils";
 import AddProjectMemberModal from "./AddProjectMemberModal";
 import { api } from "~/utils/api";
+import Loader from "./Loader";
 
 export const ProjectDetailsBox = ({
   project,
@@ -23,7 +24,7 @@ export const ProjectDetailsBox = ({
   return (
     <div className="mb-6 w-full rounded-2xl bg-zinc-800 p-6 text-white shadow-lg">
       {isLoading || !project ? (
-        "Loading..."
+        <Loader />
       ) : (
         <>
           <div className="mb-3 flex items-center justify-between">
@@ -42,13 +43,24 @@ export const ProjectDetailsBox = ({
                 <span>Created by: {project.createdBy.name}</span>
               </div>
             </div>
-
-            <button
-              onClick={() => setOpenAddUser(true)}
-              className="rounded-xl bg-blue-600 px-4 py-2 text-white shadow transition hover:bg-blue-500"
-            >
-              + Add Project Members
-            </button>
+            <div>
+              <button
+                onClick={() => setOpenAddUser(true)}
+                className="rounded-xl bg-blue-600 px-4 py-2 text-white shadow transition hover:bg-blue-500"
+              >
+                + Add Project Members
+              </button>
+              <button
+                className="ml-2 align-middle text-sm"
+                title="Project Settings"
+              >
+                <img
+                  className="size-7 rounded-full"
+                  src="/images/settings_white.svg"
+                  alt="profile"
+                />
+              </button>
+            </div>
           </div>
 
           <AddProjectMemberModal

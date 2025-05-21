@@ -1,12 +1,12 @@
 import { useParams } from "next/navigation";
 import { api } from "~/utils/api";
 import { z } from "zod";
-import Header from "~/components/Header";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ProjectDetailsBox } from "~/components/ProjectDetailsBox";
 import { TaskTabs } from "~/components/TaskTabs";
 import CreateTaskModal from "~/components/CreateTaskModal";
 import type { TaskFormType } from "~/types";
+import Layout from "~/components/Layout";
 
 export default function ProjectDetails() {
   const params = useParams<{ id: string }>();
@@ -54,8 +54,7 @@ export default function ProjectDetails() {
   }
 
   return (
-    <>
-      <Header />
+    <Layout>
       <div className="min-h-screen bg-zinc-950 px-6 py-8">
         <ProjectDetailsBox project={project} isLoading={loadingProjects} />
         <div className="mb-3 flex items-center justify-between">
@@ -67,7 +66,7 @@ export default function ProjectDetails() {
             + Create Task
           </button>
         </div>
-        {tasks && <TaskTabs tasks={tasks} />}
+        {tasks && <TaskTabs key={tasks} tasks={tasks} />}
 
         <CreateTaskModal
           isOpen={showTaskForm}
@@ -76,6 +75,6 @@ export default function ProjectDetails() {
           projectMembers={projectMembers || []}
         />
       </div>
-    </>
+    </Layout>
   );
 }

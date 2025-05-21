@@ -1,13 +1,10 @@
 import ProjectCard from "~/components/ProjectCard";
 import { api } from "~/utils/api";
+import Loader from "./Loader";
 export default function Projects() {
   const { data: projects, isLoading, isError } = api.project.all.useQuery();
   if (isLoading) {
-    return (
-      <div className="flex h-[60vh] flex-col items-center justify-center text-center text-gray-300">
-        <h2 className="mb-2 text-2xl font-semibold">Loading Projects...</h2>
-      </div>
-    );
+    return <Loader />;
   }
   if (isError) {
     return (
