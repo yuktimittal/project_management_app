@@ -1,9 +1,10 @@
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { TaskTabOptions } from "~/constants";
 import type { TasksType } from "~/types";
 import { dateFormatter } from "~/utils/utils";
 
-export const TaskTabs = ({ tasks }: { tasks: any[] }) => {
+export const TaskTabs = ({ tasks }: { key: any[]; tasks: any[] }) => {
   const [tasksList, setTasksList] = useState<TasksType>([]);
   const [activeTab, setActiveTab] = useState("All");
   const [filters, setFilters] = useState({
@@ -73,7 +74,7 @@ export const TaskTabs = ({ tasks }: { tasks: any[] }) => {
       </div>
 
       {/* Placeholder for Filters */}
-      <div className="mb-4 flex gap-4">
+      {/* <div className="mb-4 flex gap-4">
         <input
           placeholder="Filter by Assignee ID"
           className="rounded bg-zinc-800 p-2 text-white placeholder-zinc-500"
@@ -88,7 +89,7 @@ export const TaskTabs = ({ tasks }: { tasks: any[] }) => {
             setFilters((f) => ({ ...f, reporterId: e.target.value }))
           }
         />
-      </div>
+      </div> */}
 
       {tasksList.length === 0 ? (
         <div className="text-center text-zinc-400">
@@ -111,7 +112,9 @@ export const TaskTabs = ({ tasks }: { tasks: any[] }) => {
             <tbody>
               {tasksList.map((task) => (
                 <tr key={task.id} className="border-b border-zinc-700">
-                  <td className="px-4 py-2 text-white">{task.title}</td>
+                  <td className="px-4 py-2 text-white hover:underline">
+                    <Link href={`/task/${task.id}`}>{task.title}</Link>
+                  </td>
 
                   <td className="px-4 py-2">
                     <span
@@ -122,7 +125,7 @@ export const TaskTabs = ({ tasks }: { tasks: any[] }) => {
                   </td>
 
                   <td className="px-4 py-2 text-zinc-300">
-                    {task.assignee?.name}
+                    {task.assignee?.name ? task.assignee?.name : "Not Assigned"}
                   </td>
                   <td className="px-4 py-2">
                     <span

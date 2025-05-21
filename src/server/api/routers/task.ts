@@ -55,4 +55,21 @@ export const taskRouter = createTRPCRouter({
 
       return updatedTask;
     }),
+
+  getTaskById: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const task = ctx.db.task.findUnique({
+        where: { id: input },
+        include: {
+          assignee: { select: { name: true } },
+          reporter: { select: { name: true } },
+          project: { select: { name: true } },
+        },
+      });
+      if (!task) {
+        throw new Error("Task not found");
+      }
+      return task;
+    }),
 });

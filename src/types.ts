@@ -40,7 +40,7 @@ export const taskInput = z.object({
 });
 
 export const updateTaskInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   data: z
     .object({
       title: z.string().optional(),
