@@ -68,3 +68,8 @@ export const TaskFormType = z.object({
   type: z.enum(TaskTypeOptions as [string, ...string[]]),
   dueDate: z.date().optional(),
 });
+
+export const CommentInput = z.object({
+  taskId: z.string().cuid(),
+  body: z.string(),
+});
