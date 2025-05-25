@@ -52,12 +52,18 @@ export const updateTaskInput = z.object({
           invalid_type_error: `Priority must be one of: ${Object.values(TaskPriorityChoices)} `,
         })
         .optional(),
-      assigneeId: z.string().uuid().optional(),
+      assigneeId: z.string().cuid().optional(),
       status: z
         .enum(Object.values(TaskStatusChoices) as [string, ...string[]], {
           invalid_type_error: `Status must be one of: ${Object.values(TaskStatusChoices)}`,
         })
         .optional(),
+      type: z
+        .enum(TaskTypeOptions as [string, ...string[]], {
+          invalid_type_error: `Type must be one of: ${Object.values(TaskPriorityChoices)} `,
+        })
+        .optional(),
+      dueDate: z.date().optional(),
     })
     .partial(),
 });

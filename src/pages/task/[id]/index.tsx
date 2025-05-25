@@ -6,6 +6,13 @@ import TaskMetaField from "~/components/TaskMetaField";
 import { api } from "~/utils/api";
 import { dateFormatter } from "~/utils/utils";
 import { Comment } from "~/components/Comment";
+import { EditableDropdownField } from "~/components/EditableDropdownField";
+import {
+  TaskPriorityChoices,
+  TaskStatusChoices,
+  TaskTypeOptions,
+} from "~/constants";
+import { UserSelectionDropdown } from "~/components/UserSelectionDropdown";
 
 export default function TaskDetailsPage() {
   const params = useParams<{ id: string }>();
@@ -15,18 +22,18 @@ export default function TaskDetailsPage() {
   const [description, setDescription] = useState("");
   const [enableSaveDescription, setEnableSaveDescription] = useState(false);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState([
-    "Looks good, just add tests",
-    "Pending review from QA",
-  ]);
-  const [assignee, setAssignee] = useState("");
-  const [priority, setPriority] = useState("");
-  const [status, setStatus] = useState("");
-  const [labels, setLabels] = useState<string[]>([]);
-  const [type, setType] = useState("");
-  const [project, setProject] = useState("");
-  const [reporter, setReporter] = useState("");
-  const [dueDate, setDueDate] = useState<Date>();
+  const [isAssigneeEditable, setIsAssigneeEditable] = useState(false);
+  const [isDueDateEditable, setDueDateEditable] = useState(false);
+  const [dueDate, setDueDate] = useState("");
+  const [taskFields, setTaskFields] = useState({
+    assignee: "",
+    priority: "",
+    status: "",
+    labels: [],
+    type: "",
+    project: "",
+    reporter: "",
+  });
 
   const {
     data: task,
@@ -35,36 +42,67 @@ export default function TaskDetailsPage() {
   } = api.task.getTaskById.useQuery(id!, {
     enabled: !!id,
   });
-  //   const trpc = api.useUtils();
-  const { mutate: updateTask } = api.task.update.useMutation();
+
+  const { data: comments } = api.comment.getCommentsByTaskId.useQuery(id!, {
+    enabled: !!id,
+  });
+
+  const { data: projectMembers } = api.user.getProjectMembers.useQuery(
+    task?.project.id!,
+    {
+      enabled: !!task?.project.id,
+    },
+  );
+
+  const { mutate: updateTask } = api.task.update.useMutation({
+    onSettled: async () => {
+      await trpc.task.getTaskById.invalidate();
+    },
+  });
+  const trpc = api.useUtils();
+  const { mutate: createComment } = api.comment.create.useMutation({
+    onSettled: async () => {
+      await trpc.comment.getCommentsByTaskId.invalidate();
+    },
+  });
 
   useEffect(() => {
     if (task) {
       setTitle(task.title);
       setDescription(task.description || "");
-
-      setAssignee(task.assignee?.name || "");
-      setPriority(task.priority);
-      setType(task.type);
-      setStatus(task.status);
-      setLabels(task.labels);
-      setReporter(task.reporter.name || "");
-      setDueDate(task.dueDate || undefined);
-      setProject(task.project.name);
+      if (task.dueDate) {
+        const formattedDate = new Date(task.dueDate).toISOString().slice(0, 10);
+        setDueDate(formattedDate);
+      }
+      setTaskFields({
+        assignee: task.assignee?.name || "",
+        priority: task.priority,
+        status: task.status,
+        labels: [],
+        type: task.type,
+        project: task.project.name,
+        reporter: task.reporter.name || "",
+      });
     }
   }, [task]);
+  console.log("fields", taskFields);
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
-    setComments((prev) => [...prev, newComment.trim()]);
+    createComment({ taskId: id, body: newComment });
     setNewComment("");
   };
-  const updateTaskField = (fieldName: string, value: string) => {
+  const updateTaskField = (fieldName: string, value: string | Date) => {
     console.log("change", fieldName, value);
-    updateTask({ id: id, data: { [fieldName]: value } });
+    if (value) updateTask({ id: id, data: { [fieldName]: value } });
     if (fieldName === "description") {
       setEnableSaveDescription(false);
     }
+  };
+  const handleAssigneeUpdate = (userId: string) => {
+    console.log("assignee", userId);
+    if (userId) updateTask({ id: id, data: { assigneeId: userId } });
+    setIsAssigneeEditable(false);
   };
 
   return (
@@ -75,7 +113,6 @@ export default function TaskDetailsPage() {
         <>
           <div className="flex min-h-screen gap-6 bg-gray-950 p-6 text-white">
             <div className="flex flex-1 flex-col gap-6 rounded-2xl bg-gray-900 p-6 shadow-xl">
-              {/* Title */}
               <input
                 className="border-b border-gray-700 bg-transparent p-2 text-2xl font-semibold outline-none"
                 value={title}
@@ -87,13 +124,12 @@ export default function TaskDetailsPage() {
                 }}
               />
 
-              {/* Description */}
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-400">
                   Description
                 </label>
                 <textarea
-                  className="h-48 w-full resize-none overflow-y-auto rounded-md border border-gray-700 bg-gray-800 p-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="h-80 w-full resize-none overflow-y-auto rounded-md border border-gray-700 bg-gray-800 p-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   placeholder="Add description..."
                   value={description}
                   onChange={(e) => {
@@ -129,11 +165,6 @@ export default function TaskDetailsPage() {
                 <h3 className="mb-2 text-sm font-semibold text-gray-400">
                   Comments
                 </h3>
-                <div className="max-h-40 space-y-2 overflow-y-auto pr-1">
-                  {comments.map((comment, idx) => (
-                    <Comment comment={comment} key={idx} />
-                  ))}
-                </div>
                 <div className="mt-4 flex gap-2">
                   <input
                     type="text"
@@ -152,43 +183,95 @@ export default function TaskDetailsPage() {
                     Post
                   </button>
                 </div>
+                {comments && (
+                  <div className="mt-2 space-y-2 overflow-y-auto pr-1">
+                    {comments.map((comment, idx) => (
+                      <Comment comment={comment} key={idx} />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="w-80 space-y-5 rounded-2xl bg-gray-900 p-6 shadow-xl">
-              <TaskMetaField
-                label="Assignee"
-                value={assignee}
-                isEditable={true}
-              />
-              <TaskMetaField
+              {!isAssigneeEditable ? (
+                <TaskMetaField
+                  label="Assignee"
+                  value={
+                    taskFields.assignee ? taskFields.assignee : "Unassigned"
+                  }
+                  isEditable={true}
+                  onClick={() => setIsAssigneeEditable(true)}
+                />
+              ) : (
+                <UserSelectionDropdown
+                  label="Assignee"
+                  users={projectMembers}
+                  onBlur={handleAssigneeUpdate}
+                />
+              )}
+              <EditableDropdownField
                 label="Priority"
-                value={priority}
-                isEditable={true}
+                value={taskFields?.priority}
+                onChange={(val) => updateTaskField("priority", val)}
+                options={Object.values(TaskPriorityChoices)}
               />
-              <TaskMetaField label="Status" value={status} isEditable={true} />
+              <EditableDropdownField
+                label="Status"
+                value={taskFields?.status}
+                onChange={(val) => updateTaskField("status", val)}
+                options={Object.values(TaskStatusChoices)}
+              />
+              {/* <EditableTextField
+                label="Labels"
+                value={labels.join()}
+                onChange={setLabels}
+              /> */}
+              <EditableDropdownField
+                label="Type"
+                value={taskFields.type}
+                onChange={(val) => updateTaskField("type", val)}
+                options={TaskTypeOptions}
+              />
 
               <TaskMetaField
-                label="Labels"
-                value={labels.join() || "None"}
-                isEditable={true}
-              />
-              <TaskMetaField label="Type" value={type} isEditable={false} />
-              <TaskMetaField
                 label="Project"
-                value={project}
+                value={taskFields.project}
                 isEditable={false}
               />
               <TaskMetaField
                 label="Reporter"
-                value={reporter}
+                value={taskFields.reporter}
                 isEditable={false}
               />
-              <TaskMetaField
-                label="Due Date"
-                value={dueDate ? dateFormatter.format(dueDate) : "undefined"}
-                isEditable={true}
-              />
+              {!isDueDateEditable ? (
+                <TaskMetaField
+                  label="Due Date"
+                  value={
+                    task?.dueDate
+                      ? dateFormatter.format(task?.dueDate)
+                      : "undefined"
+                  }
+                  isEditable={true}
+                  onClick={() => setDueDateEditable(true)}
+                />
+              ) : (
+                <div className="flex flex-col text-sm">
+                  <label className="mb-1 text-gray-400">Due Date</label>
+                  <input
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => {
+                      setDueDate(e.target.value);
+                    }}
+                    onBlur={(e) => {
+                      updateTaskField("dueDate", new Date(e.target.value));
+                      setDueDateEditable(false);
+                    }}
+                    className="rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </>

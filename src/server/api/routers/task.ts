@@ -64,7 +64,7 @@ export const taskRouter = createTRPCRouter({
         include: {
           assignee: { select: { name: true } },
           reporter: { select: { name: true } },
-          project: { select: { name: true } },
+          project: { select: { id: true, name: true } },
         },
       });
       if (!task) {
