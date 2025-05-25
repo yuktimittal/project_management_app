@@ -17,8 +17,6 @@ export const UserSelectionDropdown = ({
   const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
   const [userId, setUserId] = useState("");
 
-  console.log(users);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -52,7 +50,6 @@ export const UserSelectionDropdown = ({
                 key={user.id}
                 className="cursor-pointer px-4 py-2 hover:bg-gray-700"
                 onClick={() => {
-                  console.log("firstttt");
                   setUserId(user.id);
                   onBlur(user.id);
                 }}

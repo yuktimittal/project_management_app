@@ -85,7 +85,6 @@ export default function TaskDetailsPage() {
       });
     }
   }, [task]);
-  console.log("fields", taskFields);
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
@@ -93,14 +92,12 @@ export default function TaskDetailsPage() {
     setNewComment("");
   };
   const updateTaskField = (fieldName: string, value: string | Date) => {
-    console.log("change", fieldName, value);
     if (value) updateTask({ id: id, data: { [fieldName]: value } });
     if (fieldName === "description") {
       setEnableSaveDescription(false);
     }
   };
   const handleAssigneeUpdate = (userId: string) => {
-    console.log("assignee", userId);
     if (userId) updateTask({ id: id, data: { assigneeId: userId } });
     setIsAssigneeEditable(false);
   };

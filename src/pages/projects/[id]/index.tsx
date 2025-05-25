@@ -21,7 +21,6 @@ export default function ProjectDetails() {
   });
 
   const createTask = (task: z.infer<typeof TaskFormType>) => {
-    console.log("task", task);
     createTaskMutation({ ...task, projectId: id });
   };
 

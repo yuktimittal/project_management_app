@@ -58,7 +58,7 @@ export default function CreateTaskModal({
   const handleDateChange = (date: Date | null) => {
     setFormData((prev) => ({ ...prev, dueDate: date ?? undefined }));
   };
-  console.log("form", formData);
+
   const handleAssigneeChange = (user: UserType) => {
     setSearchTerm(user?.name ? user.name : "");
     setShowAssigneeDropdown(false);
