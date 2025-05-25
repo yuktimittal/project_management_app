@@ -3,18 +3,27 @@ import { dateFormatter } from "~/utils/utils";
 import AddProjectMemberModal from "./AddProjectMemberModal";
 import { api } from "~/utils/api";
 import Loader from "./Loader";
+import type { UserType } from "~/types";
+import ViewProjectMembersModal from "./ViewProjectMembersModal";
 
 export const ProjectDetailsBox = ({
   project,
   isLoading,
+  projectMembers,
 }: {
   project: any;
   isLoading: Boolean;
+  projectMembers: UserType[];
 }) => {
   const [openAddUser, setOpenAddUser] = useState(false);
-
+  const [openViewProjectMembers, setOpenViewProjectMembers] = useState(false);
+  const trpc = api.useUtils();
   const { mutate: addProjectMembersMutation } =
-    api.project.addMembers.useMutation();
+    api.project.addMembers.useMutation({
+      onSettled: async () => {
+        await trpc.user.getProjectMembers.invalidate();
+      },
+    });
 
   const addProjectMembers = (userIds: string[]) => {
     const data = { projectId: project.id, userIds: userIds };
@@ -52,11 +61,12 @@ export const ProjectDetailsBox = ({
               </button>
               <button
                 className="ml-2 align-middle text-sm"
-                title="Project Settings"
+                title="View Project Members"
+                onClick={() => setOpenViewProjectMembers(true)}
               >
                 <img
                   className="size-7 rounded-full"
-                  src="/images/settings_white.svg"
+                  src="/images/contacts_icon.svg"
                   alt="profile"
                 />
               </button>
@@ -67,6 +77,11 @@ export const ProjectDetailsBox = ({
             isOpen={openAddUser}
             onClose={() => setOpenAddUser(false)}
             onCreate={(userIds) => addProjectMembers(userIds)}
+          />
+          <ViewProjectMembersModal
+            isOpen={openViewProjectMembers}
+            onClose={() => setOpenViewProjectMembers(false)}
+            projectMembers={projectMembers || []}
           />
         </>
       )}

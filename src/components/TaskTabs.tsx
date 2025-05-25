@@ -112,7 +112,7 @@ export const TaskTabs = ({ tasks }: { key: any[]; tasks: any[] }) => {
             <tbody>
               {tasksList.map((task) => (
                 <tr key={task.id} className="border-b border-zinc-700">
-                  <td className="px-4 py-2 text-white hover:underline">
+                  <td className="max-w-[350px] truncate overflow-hidden p-2 px-4 py-2 whitespace-nowrap text-white hover:underline">
                     <Link href={`/task/${task.id}`}>{task.title}</Link>
                   </td>
 

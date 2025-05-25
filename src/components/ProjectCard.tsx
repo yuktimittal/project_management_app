@@ -12,7 +12,9 @@ export default function ProjectCard({ project }: ProjectProps) {
   return (
     <div className="flex items-center justify-between rounded-xl border border-gray-700 bg-gray-800 p-4 shadow transition hover:bg-gray-700">
       <div>
-        <h2 className="text-lg font-semibold text-white">{name}</h2>
+        <h2 className="max-w-[120px] truncate overflow-hidden text-lg font-semibold whitespace-nowrap text-white">
+          {name}
+        </h2>
         <p className="text-sm text-gray-400">Created by: {createdBy.name}</p>
       </div>
       <div className="text-right text-sm text-gray-300">

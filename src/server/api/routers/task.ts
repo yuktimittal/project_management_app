@@ -7,8 +7,15 @@ export const taskRouter = createTRPCRouter({
   create: protectedProcedure
     .input(taskInput)
     .mutation(async ({ ctx, input }) => {
-      const { title, description, type, priority, projectId, assigneeId } =
-        input;
+      const {
+        title,
+        description,
+        type,
+        priority,
+        projectId,
+        assigneeId,
+        dueDate,
+      } = input;
       const reporterId = ctx.session.user.id;
       return ctx.db.task.create({
         data: {
@@ -17,6 +24,7 @@ export const taskRouter = createTRPCRouter({
           reporterId,
           type,
           priority,
+          ...(dueDate && { dueDate }),
           ...(description && { description }),
           ...(assigneeId && { assigneeId }),
         },

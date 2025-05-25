@@ -19,14 +19,16 @@ export default function CreateTaskModal({
   onCreate,
   projectMembers,
 }: CreateTaskModalProps) {
-  const [formData, setFormData] = useState<z.infer<typeof TaskFormType>>({
+  const initialFormData = {
     title: "",
     description: "",
-    priority: "Medium",
+    priority: TaskPriorityChoices.MEDIUM,
     assigneeId: undefined,
     type: "Task",
     dueDate: undefined,
-  });
+  };
+  const [formData, setFormData] =
+    useState<z.infer<typeof TaskFormType>>(initialFormData);
 
   const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
@@ -56,6 +58,7 @@ export default function CreateTaskModal({
   const handleDateChange = (date: Date | null) => {
     setFormData((prev) => ({ ...prev, dueDate: date ?? undefined }));
   };
+  console.log("form", formData);
   const handleAssigneeChange = (user: UserType) => {
     setSearchTerm(user?.name ? user.name : "");
     setShowAssigneeDropdown(false);
@@ -76,7 +79,7 @@ export default function CreateTaskModal({
       setError(null);
       onCreate(result.data);
     }
-
+    setFormData(initialFormData);
     onClose();
   };
 
@@ -197,7 +200,10 @@ export default function CreateTaskModal({
           <div className="flex justify-end gap-2 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                setFormData(initialFormData);
+                onClose();
+              }}
               className="rounded bg-gray-700 px-4 py-2 hover:bg-gray-600"
             >
               Cancel

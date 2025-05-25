@@ -39,6 +39,7 @@ export const taskInput = z.object({
   ),
   assigneeId: z.string().cuid().optional(),
   type: z.string(),
+  dueDate: z.date().optional(),
 });
 
 export const updateTaskInput = z.object({

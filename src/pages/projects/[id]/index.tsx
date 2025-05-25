@@ -56,7 +56,11 @@ export default function ProjectDetails() {
   return (
     <Layout>
       <div className="min-h-screen bg-zinc-950 px-6 py-8">
-        <ProjectDetailsBox project={project} isLoading={loadingProjects} />
+        <ProjectDetailsBox
+          project={project}
+          isLoading={loadingProjects}
+          projectMembers={projectMembers || []}
+        />
         <div className="mb-3 flex items-center justify-between">
           <h2 className="mb-2 text-2xl font-bold text-white">Tasks</h2>
           <button
