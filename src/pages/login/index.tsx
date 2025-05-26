@@ -6,7 +6,14 @@ export default function Login() {
   const router = useRouter();
   useEffect(() => {
     if (status == "authenticated") {
-      router.push("/");
+      async function handleClick() {
+        try {
+          await router.push("/");
+        } catch (error) {
+          console.log("Error while navigating to home page");
+        }
+      }
+      handleClick();
     }
   }, [sessionData]);
 

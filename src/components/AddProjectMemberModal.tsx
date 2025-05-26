@@ -23,8 +23,8 @@ export default function AddProjectMemberModal({
 
   const {
     data: users,
-    isLoading: loadingUsers,
-    isError: errorUsers,
+    // isLoading: loadingUsers,
+    // isError: errorUsers,
   } = api.user.all.useQuery();
 
   const handleSelectUser = (user: UserType) => {
@@ -40,6 +40,7 @@ export default function AddProjectMemberModal({
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     const userIds = selectedUsers.map((u) => u.id);
     onCreate(userIds);
     setSelectedUsers([]);
@@ -53,7 +54,7 @@ export default function AddProjectMemberModal({
         u?.name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !selectedUsers.find((sel) => sel.id === u.id),
     );
-    setFilteredUsers(userFilter || []);
+    setFilteredUsers(userFilter ?? []);
   }, [searchTerm]);
 
   useEffect(() => {

@@ -26,6 +26,9 @@ export const projectInput = z.object({
   endDate: z.date({ required_error: "Please provide project end date" }),
 });
 
+const priorityValues: string[] = Object.values(TaskPriorityChoices);
+const priorityString: string = priorityValues.join(", ");
+
 export const taskInput = z.object({
   projectId: z.string().cuid(),
   title: z.string({ required_error: "Give project a name" }).min(1).max(50),
@@ -34,7 +37,7 @@ export const taskInput = z.object({
     Object.values(TaskPriorityChoices) as [string, ...string[]],
     {
       required_error: "Priority is required",
-      invalid_type_error: `Priority must be one of: ${Object.values(TaskPriorityChoices)} `,
+      invalid_type_error: `Priority must be one of: ${priorityString} `,
     },
   ),
   assigneeId: z.string().cuid().optional(),

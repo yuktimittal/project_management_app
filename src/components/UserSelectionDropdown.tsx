@@ -15,7 +15,6 @@ export const UserSelectionDropdown = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
-  const [userId, setUserId] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -23,7 +22,7 @@ export const UserSelectionDropdown = ({
     const userFilter = users?.filter((u) =>
       u?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-    setFilteredUsers(userFilter || []);
+    setFilteredUsers(userFilter ?? []);
   }, [users, searchTerm]);
 
   return (
@@ -50,7 +49,6 @@ export const UserSelectionDropdown = ({
                 key={user.id}
                 className="cursor-pointer px-4 py-2 hover:bg-gray-700"
                 onClick={() => {
-                  setUserId(user.id);
                   onBlur(user.id);
                 }}
               >

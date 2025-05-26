@@ -3,16 +3,17 @@ import { dateFormatter } from "~/utils/utils";
 import AddProjectMemberModal from "./AddProjectMemberModal";
 import { api } from "~/utils/api";
 import Loader from "./Loader";
-import type { UserType } from "~/types";
+import type { ProjectType, UserType } from "~/types";
 import ViewProjectMembersModal from "./ViewProjectMembersModal";
+import Image from "next/image";
 
 export const ProjectDetailsBox = ({
   project,
   isLoading,
   projectMembers,
 }: {
-  project: any;
-  isLoading: Boolean;
+  project: ProjectType;
+  isLoading: boolean;
   projectMembers: UserType[];
 }) => {
   const [openAddUser, setOpenAddUser] = useState(false);
@@ -64,10 +65,12 @@ export const ProjectDetailsBox = ({
                 title="View Project Members"
                 onClick={() => setOpenViewProjectMembers(true)}
               >
-                <img
+                <Image
                   className="size-7 rounded-full"
                   src="/images/contacts_icon.svg"
-                  alt="profile"
+                  width={100}
+                  height={100}
+                  alt="project_members"
                 />
               </button>
             </div>

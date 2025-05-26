@@ -3,7 +3,7 @@ import type { ProjectType } from "~/types";
 import { api } from "~/utils/api";
 import CreateProjectModal from "./CreateProjectModal";
 
-export default function createProject() {
+export default function CreateProject() {
   const [modalOpen, setModalOpen] = useState(false);
   const trpc = api.useUtils();
   const { mutate: createProjectMutation } = api.project.create.useMutation({

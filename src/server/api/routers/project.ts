@@ -12,6 +12,7 @@ export const projectRouter = createTRPCRouter({
       select: {
         id: true,
         name: true,
+        description: true,
         startDate: true,
         endDate: true,
         createdBy: {
@@ -22,13 +23,16 @@ export const projectRouter = createTRPCRouter({
       },
     });
 
-    return projects.map(({ id, name, startDate, endDate, createdBy }) => ({
-      id,
-      name,
-      startDate,
-      endDate,
-      createdBy,
-    }));
+    return projects.map(
+      ({ id, name, description, startDate, endDate, createdBy }) => ({
+        id,
+        name,
+        description,
+        startDate,
+        endDate,
+        createdBy,
+      }),
+    );
   }),
 
   create: protectedProcedure

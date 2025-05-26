@@ -1,6 +1,5 @@
 import React from "react";
 import type { UserType } from "~/types";
-import Loader from "./Loader";
 
 export default function ViewProjectMembersModal({
   isOpen,

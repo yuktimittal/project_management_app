@@ -4,15 +4,15 @@ import { TaskTabOptions } from "~/constants";
 import type { TasksType } from "~/types";
 import { dateFormatter } from "~/utils/utils";
 
-export const TaskTabs = ({ tasks }: { key: any[]; tasks: any[] }) => {
+export const TaskTabs = ({ tasks }: { tasks: TasksType }) => {
   const [tasksList, setTasksList] = useState<TasksType>([]);
   const [activeTab, setActiveTab] = useState("All");
-  const [filters, setFilters] = useState({
-    assigneeId: "",
-    reporterId: "",
-    status: "",
-    type: "",
-  });
+  // const [filters, setFilters] = useState({
+  //   assigneeId: "",
+  //   reporterId: "",
+  //   status: "",
+  //   type: "",
+  // });
 
   useEffect(() => {
     const filteredTasks = tasks.filter((task) => {
@@ -110,7 +110,7 @@ export const TaskTabs = ({ tasks }: { key: any[]; tasks: any[] }) => {
               </tr>
             </thead>
             <tbody>
-              {tasksList.map((task) => (
+              {tasksList.map((task: TasksType[number]) => (
                 <tr key={task.id} className="border-b border-zinc-700">
                   <td className="max-w-[350px] truncate overflow-hidden p-2 px-4 py-2 whitespace-nowrap text-white hover:underline">
                     <Link href={`/task/${task.id}`}>{task.title}</Link>
@@ -125,7 +125,7 @@ export const TaskTabs = ({ tasks }: { key: any[]; tasks: any[] }) => {
                   </td>
 
                   <td className="px-4 py-2 text-zinc-300">
-                    {task.assignee?.name ? task.assignee?.name : "Not Assigned"}
+                    {task.assignee?.name ?? "Not Assigned"}
                   </td>
                   <td className="px-4 py-2">
                     <span
@@ -139,7 +139,7 @@ export const TaskTabs = ({ tasks }: { key: any[]; tasks: any[] }) => {
                     {task.reporter.name}
                   </td>
                   <td className="px-4 py-2 text-zinc-400">
-                    {dateFormatter.format(task.createdAt)}
+                    {dateFormatter.format(new Date(task.createdAt))}
                   </td>
                 </tr>
               ))}

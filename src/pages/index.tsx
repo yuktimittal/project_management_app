@@ -10,7 +10,14 @@ export default function Home() {
   const router = useRouter();
   useEffect(() => {
     if (status == "unauthenticated") {
-      router.push("/login");
+      async function handleClick() {
+        try {
+          await router.push("/login");
+        } catch (error) {
+          console.log("Error while navigating to login page");
+        }
+      }
+      handleClick();
     }
   }, [sessionData]);
   return (

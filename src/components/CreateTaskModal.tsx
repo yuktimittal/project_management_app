@@ -60,7 +60,7 @@ export default function CreateTaskModal({
   };
 
   const handleAssigneeChange = (user: UserType) => {
-    setSearchTerm(user?.name ? user.name : "");
+    setSearchTerm(user?.name ?? "");
     setShowAssigneeDropdown(false);
     setFormData((prev) => ({ ...prev, assigneeId: user?.id || "" }));
   };

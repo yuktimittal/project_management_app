@@ -59,11 +59,7 @@ export default function Header() {
 
             <img
               className="size-8 rounded-full"
-              src={
-                sessionData.user.image
-                  ? sessionData.user.image
-                  : "/images/profile_icon.svg"
-              }
+              src={sessionData.user.image ?? "/images/profile_icon.svg"}
               alt="profile"
             />
           </button>

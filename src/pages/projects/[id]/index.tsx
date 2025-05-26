@@ -10,7 +10,7 @@ import Layout from "~/components/Layout";
 
 export default function ProjectDetails() {
   const params = useParams<{ id: string }>();
-  const id = params?.id as string;
+  const id = params?.id! as string;
 
   const [showTaskForm, setShowTaskForm] = useState(false);
   const trpc = api.useUtils();
@@ -58,7 +58,7 @@ export default function ProjectDetails() {
         <ProjectDetailsBox
           project={project}
           isLoading={loadingProjects}
-          projectMembers={projectMembers || []}
+          projectMembers={projectMembers ?? []}
         />
         <div className="mb-3 flex items-center justify-between">
           <h2 className="mb-2 text-2xl font-bold text-white">Tasks</h2>
@@ -69,13 +69,13 @@ export default function ProjectDetails() {
             + Create Task
           </button>
         </div>
-        {tasks && <TaskTabs key={tasks} tasks={tasks} />}
+        {tasks && <TaskTabs key={JSON.stringify(tasks)} tasks={tasks} />}
 
         <CreateTaskModal
           isOpen={showTaskForm}
           onClose={() => setShowTaskForm(false)}
           onCreate={createTask}
-          projectMembers={projectMembers || []}
+          projectMembers={projectMembers ?? []}
         />
       </div>
     </Layout>

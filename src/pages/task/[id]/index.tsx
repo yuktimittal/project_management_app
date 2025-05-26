@@ -16,7 +16,7 @@ import { UserSelectionDropdown } from "~/components/UserSelectionDropdown";
 
 export default function TaskDetailsPage() {
   const params = useParams<{ id: string }>();
-  const id = params?.id as string;
+  const id = params?.id! as string;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -69,19 +69,19 @@ export default function TaskDetailsPage() {
   useEffect(() => {
     if (task) {
       setTitle(task.title);
-      setDescription(task.description || "");
+      setDescription(task.description ?? "");
       if (task.dueDate) {
         const formattedDate = new Date(task.dueDate).toISOString().slice(0, 10);
         setDueDate(formattedDate);
       }
       setTaskFields({
-        assignee: task.assignee?.name || "",
+        assignee: task.assignee?.name ?? "",
         priority: task.priority,
         status: task.status,
         labels: [],
         type: task.type,
         project: task.project.name,
-        reporter: task.reporter.name || "",
+        reporter: task.reporter.name ?? "",
       });
     }
   }, [task]);
@@ -138,7 +138,7 @@ export default function TaskDetailsPage() {
                   <div className="flex justify-end">
                     <button
                       onClick={() => {
-                        setDescription(task?.description || "");
+                        setDescription(task?.description ?? "");
                         setEnableSaveDescription(false);
                       }}
                       className="mr-2 rounded-md bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-400"
@@ -246,7 +246,7 @@ export default function TaskDetailsPage() {
                   label="Due Date"
                   value={
                     task?.dueDate
-                      ? dateFormatter.format(task?.dueDate)
+                      ? dateFormatter.format(new Date(task?.dueDate))
                       : "undefined"
                   }
                   isEditable={true}
