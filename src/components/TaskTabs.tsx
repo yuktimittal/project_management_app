@@ -107,7 +107,7 @@ export const TaskTabs = ({ tasks }: { tasks: TasksType }) => {
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Type</th>
                 <th className="px-4 py-2">Reporter</th>
-                <th className="px-4 py-2">Created At</th>
+                <th className="px-4 py-2">Due Date</th>
               </tr>
             </thead>
             <tbody>
@@ -140,7 +140,9 @@ export const TaskTabs = ({ tasks }: { tasks: TasksType }) => {
                     {task.reporter.name}
                   </td>
                   <td className="px-4 py-2 text-zinc-400">
-                    {dateFormatter.format(new Date(task.createdAt))}
+                    {task.dueDate
+                      ? dateFormatter.format(new Date(task.dueDate))
+                      : "N/A"}
                   </td>
                 </tr>
               ))}

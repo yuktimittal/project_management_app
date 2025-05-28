@@ -46,6 +46,7 @@ export const taskRouter = createTRPCRouter({
             select: { name: true },
           },
         },
+        orderBy: { createdAt: "desc" },
       });
 
       return tasks;

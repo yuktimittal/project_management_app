@@ -6,9 +6,6 @@ import { projectInput } from "~/types";
 export const projectRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
     const projects = await ctx.db.project.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
       select: {
         id: true,
         name: true,
