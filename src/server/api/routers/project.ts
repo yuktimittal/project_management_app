@@ -20,19 +20,40 @@ export const projectRouter = createTRPCRouter({
             name: true,
           },
         },
+        Task: {
+          select: {
+            id: true,
+            dueDate: true,
+            status: true,
+          },
+        },
       },
     });
-
-    return projects.map(
-      ({ id, name, description, startDate, endDate, createdBy }) => ({
-        id,
-        name,
-        description,
-        startDate,
-        endDate,
-        createdBy,
-      }),
+    const now = new Date();
+    const projectsList = projects.map(
+      ({ id, name, description, startDate, endDate, createdBy, Task }) => {
+        const activeTasks = Task.filter(
+          (task) => task.status !== "Done" && task.status != "Cancelled",
+        );
+        const overdueTasks = Task.filter(
+          (task) =>
+            task.dueDate &&
+            new Date(task.dueDate) < now &&
+            task.status !== "done",
+        );
+        return {
+          id: id,
+          name: name,
+          description: description,
+          startDate: startDate,
+          endDate: endDate,
+          createdBy: createdBy,
+          activeTasks: activeTasks.length,
+          overDueTasks: overdueTasks.length,
+        };
+      },
     );
+    return projectsList;
   }),
 
   create: protectedProcedure

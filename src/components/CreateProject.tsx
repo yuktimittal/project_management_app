@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { ProjectType } from "~/types";
 import { api } from "~/utils/api";
 import CreateProjectModal from "./CreateProjectModal";
 

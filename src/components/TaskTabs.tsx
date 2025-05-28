@@ -20,7 +20,8 @@ export const TaskTabs = ({ tasks }: { tasks: TasksType }) => {
         activeTab === "All" ||
         (activeTab === "To Do" && task.status === "To Do") ||
         (activeTab === "In Progress" && task.status === "In Progress") ||
-        (activeTab === "Done" && task.status === "Done");
+        (activeTab === "Done" && task.status === "Done") ||
+        (activeTab === "Cancelled" && task.status === "Cancelled");
       return matchTab;
     });
     setTasksList(filteredTasks);
@@ -35,7 +36,7 @@ export const TaskTabs = ({ tasks }: { tasks: TasksType }) => {
       case "medium":
         return "bg-yellow-200 text-black";
       case "low":
-        return "bg-green-400 text-white";
+        return "bg-green-500 text-white";
       default:
         return "bg-gray-500 text-white";
     }
@@ -47,9 +48,9 @@ export const TaskTabs = ({ tasks }: { tasks: TasksType }) => {
       case "in progress":
         return "bg-yellow-200 text-black";
       case "done":
-        return "bg-green-400 text-white";
+        return "bg-green-500 text-white";
       case "cancelled":
-        return "bg-red-200 text-white";
+        return "bg-red-400 text-white";
       default:
         return "bg-gray-500 text-white";
     }

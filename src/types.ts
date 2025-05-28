@@ -10,11 +10,13 @@ import {
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 type allProjectsOutput = RouterOutputs["project"]["all"];
+type projectByIdOutput = RouterOutputs["project"]["getProjectById"];
 type allTasksOutput = RouterOutputs["task"]["getTasksByProjectId"];
 type allUserOutput = RouterOutputs["user"]["all"];
 type allCommentForTaskOutput = RouterOutputs["comment"]["getCommentsByTaskId"];
 
-export type ProjectType = allProjectsOutput[number];
+export type ProjectsListType = allProjectsOutput;
+export type ProjectType = projectByIdOutput;
 
 export type TasksType = allTasksOutput;
 export type UserType = allUserOutput[number];

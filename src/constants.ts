@@ -12,5 +12,11 @@ export enum TaskPriorityChoices {
   LOW = "Low",
 }
 
-export const TaskTabOptions = ["All", "To Do", "In Progress", "Done"];
+export const TaskTabOptions = [
+  "All",
+  "To Do",
+  "In Progress",
+  "Done",
+  "Cancelled",
+];
 export const TaskTypeOptions = ["Story", "Task", "Sub Task", "Bug"];
