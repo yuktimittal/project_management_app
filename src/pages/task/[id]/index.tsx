@@ -114,6 +114,7 @@ export default function TaskDetailsPage() {
                 className="border-b border-gray-700 bg-transparent p-2 text-2xl font-semibold outline-none"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                onBlur={(e) => updateTaskField("title", title)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     updateTaskField("title", title);
