@@ -1,4 +1,4 @@
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Layout from "~/components/Layout";
 import Loader from "~/components/Loader";
@@ -13,10 +13,12 @@ import {
   TaskTypeOptions,
 } from "~/constants";
 import { UserSelectionDropdown } from "~/components/UserSelectionDropdown";
+import Image from "next/image";
 
 export default function TaskDetailsPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id! as string;
+  const router = useRouter();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -102,6 +104,10 @@ export default function TaskDetailsPage() {
     setIsAssigneeEditable(false);
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <Layout>
       {loadingTasks ? (
@@ -110,17 +116,27 @@ export default function TaskDetailsPage() {
         <>
           <div className="flex min-h-screen gap-6 bg-gray-950 p-6 text-white">
             <div className="flex flex-1 flex-col gap-6 rounded-2xl bg-gray-900 p-6 shadow-xl">
-              <input
-                className="border-b border-gray-700 bg-transparent p-2 text-2xl font-semibold outline-none"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                onBlur={(e) => updateTaskField("title", title)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    updateTaskField("title", title);
-                  }
-                }}
-              />
+              <div className="flex border-b border-gray-700">
+                <button onClick={handleBack} title="Go Back">
+                  <Image
+                    src="/images/back_arrow.svg"
+                    width={40}
+                    height={50}
+                    alt="back"
+                  />
+                </button>
+                <input
+                  className="bg-transparent p-2 text-2xl font-semibold outline-none"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={(e) => updateTaskField("title", title)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      updateTaskField("title", title);
+                    }
+                  }}
+                />
+              </div>
 
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-400">
